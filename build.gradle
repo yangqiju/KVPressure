@@ -1,0 +1,49 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+repositories {
+	flatDir {
+		dirs 'libs'
+	}
+ }
+
+dependencies {
+	compile 'org.projectlombok:lombok:1.12.2'
+	compile 'ch.qos.logback:logback-classic:1.0.0'
+	compile 'com.basho.riak:riak-client:2.0.0'
+	compile 'redis.clients:jedis:2.7.3'
+	compile 'com.datastax.cassandra:cassandra-driver-core:2.1.7'
+	compile 'org.apache.commons:commons-lang3:3.1'
+	compile 'commons-configuration:commons-configuration:1.10'
+	compile "com.aerospike:aerospike-client:3.1.6"
+//	compile "com.wandoulabs.jodis:jodis:0.2.2"
+	compile "org.apache.curator:curator-recipes:2.9.0"
+	compile files('libs/paldb-1.0.0.jar')
+}
+
+jar{
+	exclude("config.properties")
+}
+
+distributions {
+	main {
+		contents {
+			into("bin"){
+				from { "src/main/resources/config.properties" }
+			}
+		}
+	}
+}
+
+mainClassName = "com.joyveb.kvpressure.start.PressureStarter"
+applicationName = "PressureStarter"
+
