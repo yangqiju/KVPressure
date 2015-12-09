@@ -21,14 +21,15 @@ import com.linkedin.paldb.impl.StorageSerialization;
 public class PaldbExample {
 	File file = new File("/home/yangqiju/tmp/store.paldb");
 	int dataSize = 10000000;
+	int loopSize = dataSize*4;
 	StorageSerialization storageSerialization = new StorageSerialization(
 			new Configuration());
 
 	@Test
 	// @Ignore
 	public void test() throws IOException {
-		// this.write();
-		this.read();
+		 this.write();
+//		this.read();
 	}
 
 	public void write() throws IOException {
@@ -37,7 +38,8 @@ public class PaldbExample {
 		for (int i = 0; i < dataSize; i++) {
 			byte[] serializedKey = storageSerialization.serializeKey(ByteUtils
 					.intToBytes(i));
-			byte[] value = new RandomByteIterator(25).toArray();
+			 byte[] value = new RandomByteIterator(25).toArray();
+//			byte[] value = ByteUtils.intToBytes(i);
 			byte[] serializedValue = storageSerialization.serializeValue(value);
 			writer.put(serializedKey, serializedValue);
 		}
@@ -55,20 +57,20 @@ public class PaldbExample {
 		StoreReader reader = PalDB.createReader(file, config);
 		long readStartTime = System.nanoTime();
 		long trancost = 0;
-		for (int i = 0; i < dataSize; i++) {
+		for (int i = 0; i < loopSize; i++) {
 			long costStart = System.nanoTime();
 			byte[] result = reader.get(ByteUtils.intToBytes(RandomUtils
 					.nextInt(dataSize)));
 			// System.out.println(result);
 			trancost = trancost + (System.nanoTime() - costStart);
-			Assert.assertEquals(25, result.length);
+//			Assert.assertEquals(25, result.length);
 		}
 		reader.close();
 		long readEndTime = System.nanoTime() - readStartTime;
 		System.out.println("read end.. cost time:" + readEndTime
 				/ Constans.NANO_MILLIS);
 		System.out.println("TPS:"
-				+ (dataSize / ((readEndTime / Constans.NANO_MILLIS) / 1000)));
+				+ (loopSize / ((readEndTime / Constans.NANO_MILLIS) / 1000)));
 		System.out.println("cost time::" + (trancost / dataSize) + " nano");
 		System.gc();
 	}
